@@ -1,0 +1,85 @@
+---
+import { getCollection } from 'astro:content';
+import WriteupShell from '../../layouts/WriteupShell.astro';
+
+// Drafts show while you work locally (npm run dev) but never on the live site.
+const writeups = (
+	await getCollection('writeups', ({ data }) => (import.meta.env.PROD ? !data.draft : true))
+).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const fmt = (d: Date) =>
+	d.toLocaleDateString('en-CA', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
+---
+<WriteupShell
+	title="Writeups — Jaspreet Singh"
+	description="Forensics and blue team case writeups from my home lab and from training platforms."
+>
+	<h1 class="w-title">Writeups</h1>
+	<p class="w-intro">
+		Investigations from my forensics lab and from training platforms. Each one walks through the
+		evidence, the tools, and how I reached the answer, including the dead ends.
+	</p>
+
+	{writeups.length === 0 ? (
+		<p class="w-empty">
+			The first writeups are being written now. In the meantime, the
+			<a href="/#pathways">projects on the home page</a> show what the lab is built to do.
+		</p>
+	) : (
+		<ol class="w-list">
+			{writeups.map((w) => (
+				<li>
+					<a class="w-row" href={`/writeups/${w.id}/`}>
+						<time datetime={w.data.date.toISOString()}>{fmt(w.data.date)}</time>
+						<span class="w-row-text">
+							<span class="w-row-title">
+								{w.data.title}
+								{w.data.draft && <em class="w-draft">Draft</em>}
+							</span>
+							<span class="w-row-desc">{w.data.description}</span>
+						</span>
+						<span class="w-row-meta">
+							{[w.data.platform, w.data.category].filter(Boolean).join(', ')}
+						</span>
+					</a>
+				</li>
+			))}
+		</ol>
+	)}
+</WriteupShell>
+
+<style>
+	.w-title {
+		margin: 0 0 18px; font-weight: 400; font-size: clamp(38px, 6vw, 72px);
+		line-height: 1; letter-spacing: -.02em;
+	}
+	.w-intro { margin: 0 0 clamp(36px, 6vh, 64px); color: var(--bone-dim); max-width: 56ch; }
+	.w-empty { color: var(--bone-dim); border-top: 1px solid var(--line-soft); padding-top: 28px; }
+	.w-empty a { color: var(--bone); text-decoration: none; border-bottom: 1px solid var(--vermilion); }
+
+	.w-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-soft); }
+	.w-row {
+		position: relative; display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 6px 24px;
+		padding: 24px 0; border-bottom: 1px solid var(--line-soft); text-decoration: none;
+	}
+	.w-row::after {
+		content: ''; position: absolute; left: 0; bottom: -1px; height: 1px; width: 100%;
+		background: var(--vermilion); transform: scaleX(0); transform-origin: left;
+		transition: transform .6s cubic-bezier(.16, 1, .3, 1);
+	}
+	.w-row:hover::after, .w-row:focus-visible::after { transform: scaleX(1); }
+	.w-row time { font-size: 13px; color: var(--muted); padding-top: 4px; font-variant-numeric: tabular-nums; }
+	.w-row-text { display: flex; flex-direction: column; gap: 4px; }
+	.w-row-title { font-size: 21px; font-weight: 400; line-height: 1.3; }
+	.w-row-desc { color: var(--bone-dim); font-size: 15px; }
+	.w-row-meta { grid-column: 2; font-size: 13px; color: var(--muted); }
+	.w-draft {
+		margin-left: 10px; font-style: normal; font-size: 12px; color: var(--vermilion);
+		border: 1px solid currentColor; padding: 1px 7px; border-radius: 99px; vertical-align: middle;
+	}
+	@media (max-width: 600px) {
+		.w-row { grid-template-columns: 1fr; }
+		.w-row-meta { grid-column: 1; }
+	}
+	@media (prefers-reduced-motion: reduce) { .w-row::after { transition: none; } }
+</style>
