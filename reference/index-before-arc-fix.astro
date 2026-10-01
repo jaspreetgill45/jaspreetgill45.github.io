@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { PredictiveArcCanvas } from '@designcodeio/threeui/components/PredictiveArcCanvas';
 
 // Latest writeups, pulled automatically. Drafts show only while you work locally.
 const writeups = (
@@ -1050,6 +1051,15 @@ body[data-layout-closing="b"] .fin .b-ctas{ grid-column:1; grid-row:3; justify-s
   .b-prow, .b-role{ grid-template-columns:1fr; }
   .fin .b-ctas{ align-items:center; }
 }
+/* ============================================ arc background (writeups) */
+.threeui-background{ position:relative; width:100%; height:100%; overflow:hidden; background:#030304; }
+.threeui-background > canvas{ position:absolute; inset:0; display:block; width:100%; height:100%; }
+#writeups{ isolation:isolate; }
+#writeups > .b-arcbg{ position:absolute !important; inset:0; z-index:0 !important; pointer-events:none; opacity:.85;
+  -webkit-mask-image:linear-gradient(transparent, #000 16%, #000 80%, transparent);
+          mask-image:linear-gradient(transparent, #000 16%, #000 80%, transparent); }
+@media (prefers-reduced-motion:reduce){ #writeups > .b-arcbg{ display:none; } }
+
 /* ============================================ ember buttons: a dimmed, on-brand take on a shader button */
 @property --b-ang{ syntax:'<angle>'; inherits:false; initial-value:0deg; }
 @property --b-heat{ syntax:'<number>'; inherits:false; initial-value:0; }
@@ -1231,6 +1241,9 @@ body[data-layout-closing="b"] .fin .b-ctas{ grid-column:1; grid-row:3; justify-s
 
 <!-- ============================================================ writeups -->
 <section class="sec" id="writeups">
+  <div class="b-arcbg" aria-hidden="true">
+    <PredictiveArcCanvas client:visible hue={104} saturation={1.05} brightness={0.5} spacing={6} dotSize={5} speed={0.5} archHeight={0.55} thickness={1.15} />
+  </div>
   <div class="sec-head" data-rv="fade">
     <span class="k"><b>02</b> — Writeups</span><span class="rule"></span><a class="k b-more" href="/writeups/" data-cursor>All writeups &rarr;</a>
   </div>
