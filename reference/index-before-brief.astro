@@ -1,91 +1,3 @@
----
-import { getCollection } from 'astro:content';
-
-// Latest writeups, pulled automatically. Drafts show only while you work locally.
-const writeups = (
-	await getCollection('writeups', ({ data }) => (import.meta.env.PROD ? !data.draft : true))
-).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-const latest = writeups.slice(0, 3);
-const fmt = (d) => d.toLocaleDateString('en-CA', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
-const minutes = (w) => Math.max(1, Math.round((w.body ?? '').split(/\s+/).length / 200));
-
-// ---- Edit your content below. Each item renders automatically. ----
-const projects = [
-	{ name: 'Cloud VPN Gateway', where: 'Home lab', metric: 'Zero third-party DNS',
-	  summary: 'Hardened WireGuard exit on Oracle Cloud with its own DNSSEC-validating resolver. Leak-tested and verified from outside.',
-	  tags: ['WireGuard', 'Unbound', 'Pi-hole', 'UFW'], link: '/writeups/private-vpn-gateway-oracle-cloud/', linkText: 'Read the build' },
-	{ name: 'Vulnerability Remediation Program', where: 'Securian Canada', metric: '~90% closure sustained',
-	  summary: 'Built the repeatable scan and remediation cycle, plus the triage and escalation workflow the team now uses, with compliance reporting for leadership.',
-	  tags: ['Qualys', 'Risk management', 'Reporting'] },
-	{ name: 'Enterprise AI Adoption and Governance', where: 'Securian Canada', metric: '~600 users',
-	  summary: 'Licensing, tenant enrollment, rollout, and training for Copilot and ChatGPT Enterprise, plus the governance framework for how AI tools are adopted.',
-	  tags: ['Microsoft Copilot', 'ChatGPT Enterprise', 'AI governance'] },
-	{ name: 'AI Driven Attack Tabletop', where: 'Securian Canada', metric: 'New threat model tested',
-	  summary: 'Designed and led a tabletop exercise testing detection coverage, escalation paths, and decisions against a scenario the existing plan had not covered.',
-	  tags: ['Incident response', 'Tabletop exercise'] },
-	{ name: 'SharePoint Migration After an Acquisition', where: 'Securian Canada', metric: '20 sites, 400 to 600 GB',
-	  summary: 'Migrated sites across two tenants, remapped permissions, validated content, and kept user access intact with no reported disruption.',
-	  tags: ['SharePoint Online', 'ShareGate', 'Permissions'] },
-	{ name: 'Contact Center Cutover', where: 'Securian Canada', metric: 'Zero service outage',
-	  summary: 'Moved about 100 call center users to a new contact center platform, with stakeholder testing and training that reduced escalations.',
-	  tags: ['RingCentral', 'Change management'] },
-	{ name: 'Autopilot Provisioning', where: 'Securian Canada', metric: 'Hours to under 30 minutes',
-	  summary: 'Intune and Windows Autopilot deployments for 5 to 10 new hires a month, with compliance policies and configuration baselines.',
-	  tags: ['Intune', 'Windows Autopilot'] },
-	{ name: 'Identity and Fleet Automation', where: 'Securian Canada', metric: 'Manual work removed',
-	  summary: 'PowerShell and Microsoft Graph scripts for bulk provisioning, license reclamation, stale account cleanup, and scheduled compliance reporting.',
-	  tags: ['PowerShell', 'Microsoft Graph', 'Entra ID'] },
-];
-
-const roles = [
-	{ title: 'Senior Systems Specialist', org: 'Securian Canada', place: 'Burnaby, BC', dates: 'Nov 2025 to present', now: true,
-	  summary: 'Cybersecurity, identity governance, infrastructure, and policy ownership.',
-	  points: [
-		'Mentor a team of four and serve as the Tier 3 escalation point, with knowledge transfer through documented SOPs and runbooks.',
-		'Own identity and access across about 600 identities: Entra ID, Conditional Access, MFA, RBAC, Privileged Identity Management, and SAML single sign-on, integrated with on-premises Active Directory.',
-		'Run alert triage, policy tuning, and containment across the 600 device fleet with EDR and a managed SOC.',
-		'Lead organization-wide vulnerability scanning and remediation, sustaining about 90% closure of findings.',
-		'Administer Microsoft Purview and data loss prevention in line with PIPEDA, OSFI, ISO 27001, and NIST aligned requirements.',
-		'Maintain the incident response plan, disaster recovery, and business continuity procedures, including backup restore verification and recovery testing.',
-	  ],
-	  tags: ['Entra ID', 'Conditional Access', 'PIM', 'Purview', 'Qualys', 'Veeam', 'KQL'] },
-	{ title: 'Systems Specialist', org: 'Securian Canada', place: 'Burnaby, BC', dates: 'Feb 2023 to Nov 2025',
-	  summary: 'Tier 2 operations, endpoint, identity, and platform administration.',
-	  points: [
-		'Administered Microsoft Intune across 600 Windows endpoints and mobile devices, and cut per-device provisioning from several hours to under 30 minutes with Autopilot.',
-		'Built and maintained golden images deployed through SCCM and PXE network boot.',
-		'Wrote PowerShell and Microsoft Graph automation for provisioning, license management, and compliance reporting.',
-		'Administered Citrix, VMware, and Hyper-V, and governed SharePoint Online, Teams, and OneDrive.',
-	  ],
-	  tags: ['Intune', 'Autopilot', 'SCCM', 'PowerShell', 'Microsoft Graph', 'Citrix'] },
-	{ title: 'IT Helpdesk', org: 'Securian Canada', place: 'Burnaby, BC', dates: 'Aug 2022 to Feb 2023',
-	  summary: 'Tier 1 and Tier 2 support, account lifecycle, and hardware lifecycle.',
-	  points: [
-		'Resolved support requests through ServiceNow to defined response targets, escalating with full reproduction steps.',
-		'Managed account provisioning and deprovisioning in Active Directory with HR and Compliance.',
-		'Wrote knowledge base articles that reduced repeat escalations and shortened onboarding for new team members.',
-	  ],
-	  tags: ['ServiceNow', 'Active Directory', 'SCCM'] },
-	{ title: 'Operations Coordinator and IT', org: 'Evolution Fulfillment', place: 'Delta, BC', dates: 'Apr 2022 to Aug 2022',
-	  summary: 'The only IT resource for a warehouse and fulfillment operation.',
-	  points: [
-		'Owned devices, network and scanner connectivity, vendors, and all day to day support.',
-		'Designed and implemented the first structured ticketing system, giving management visibility into support volume and resolution times.',
-	  ],
-	  tags: ['Ticketing', 'Networking', 'Onboarding'] },
-];
-
-const skills = [
-	{ group: 'Identity and access', items: ['Entra ID', 'Active Directory', 'Conditional Access', 'MFA', 'RBAC', 'PIM', 'SAML and SSO', 'LDAP', 'PKI'] },
-	{ group: 'Security operations', items: ['EDR', 'Managed SIEM', 'Microsoft Defender', 'Splunk', 'Qualys', 'Nessus', 'Nmap', 'Incident response'] },
-	{ group: 'Governance and compliance', items: ['PIPEDA', 'OSFI', 'ISO 27001', 'NIST', 'Microsoft Purview', 'DLP', 'Tabletop exercises'] },
-	{ group: 'Endpoint management', items: ['Intune', 'Windows Autopilot', 'SCCM', 'PXE imaging', 'CIS benchmarks'] },
-	{ group: 'Infrastructure and networking', items: ['Windows Server', 'Group Policy', 'DNS and DHCP', 'VLANs', 'Firewalls', 'WireGuard', 'Tailscale'] },
-	{ group: 'Cloud and virtualization', items: ['Azure', 'Azure Monitor', 'Oracle Cloud', 'VMware', 'Hyper-V', 'Citrix'] },
-	{ group: 'Automation', items: ['PowerShell', 'Microsoft Graph', 'Python', 'Bash', 'KQL', 'Git', 'Ansible'] },
-	{ group: 'Operating systems', items: ['Windows 10 and 11', 'Debian', 'Ubuntu Server', 'Fedora', 'Raspberry Pi OS'] },
-];
----
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -973,85 +885,6 @@ body[data-layout-footer="b"] .foot-base span:last-child{ text-align:right; }
   .mask-line > span,.word{ opacity:1 !important; transform:none !important; }
 }
 </style>
-<style is:inline>
-/* ============================================ brief-style content blocks */
-.b-cta-row{ display:flex; flex-wrap:wrap; gap:10px; margin-top:26px; }
-.b-btn{ display:inline-flex; align-items:center; gap:8px; padding:11px 18px; border:1px solid var(--line);
-  border-radius:100px; background:rgba(5,7,10,.5); font-size:11px; font-weight:500; letter-spacing:.16em;
-  text-transform:uppercase; color:var(--bone); transition:background .35s var(--ease), color .35s, border-color .35s; }
-.b-btn:hover{ background:var(--bone); color:#05070a; border-color:var(--bone); }
-.b-btn.is-primary{ border-color:rgba(224,35,28,.7); }
-.b-intro{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,.8fr); gap:clamp(24px,5vw,90px);
-  align-items:end; margin-bottom:clamp(30px,5vh,56px); }
-.b-intro h2{ max-width:16ch; }
-.b-more{ color:var(--bone-dim) !important; text-decoration:none; transition:color .3s; }
-.b-more:hover{ color:var(--bone) !important; }
-.b-panel{ background:rgba(5,7,10,.78); border:1px solid var(--line-soft); }
-
-/* writeups */
-.b-wgrid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; }
-.b-wcard{ display:flex; flex-direction:column; gap:14px; padding:clamp(22px,2.4vw,32px); min-height:300px;
-  background:rgba(5,7,10,.8); border:1px solid var(--line-soft); transition:border-color .45s var(--ease), transform .6s var(--ease-out); }
-.b-wcard:hover{ border-color:rgba(224,35,28,.55); transform:translate3d(0,-3px,0); }
-.b-wmeta{ font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); }
-.b-wcard h3{ font-size:clamp(19px,1.6vw,24px); line-height:1.25; font-weight:400; }
-.b-wcard p{ margin:0; font-size:14px; line-height:1.65; color:#9aa5a0; }
-.b-read{ margin-top:auto; font-size:11px; font-weight:500; letter-spacing:.18em; text-transform:uppercase; color:var(--bone); }
-.b-read::after{ content:' \2192'; }
-.b-tags{ display:flex; flex-wrap:wrap; gap:6px; }
-.b-tags i{ font-style:normal; font-size:11px; padding:3px 9px; border:1px solid var(--line); border-radius:100px; color:var(--bone-dim); }
-
-/* projects index */
-.b-plist{ margin-top:clamp(80px,14vh,170px); border-top:1px solid var(--line-soft); }
-.b-plist-head{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; padding:22px 0 10px; }
-.b-plist-head h3{ font-size:clamp(20px,1.8vw,26px); font-weight:400; }
-.b-prow{ display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.5fr) minmax(150px,.55fr); gap:10px clamp(18px,3vw,44px);
-  padding:24px clamp(16px,2vw,28px); border-bottom:1px solid var(--line-soft); background:rgba(5,7,10,.74); }
-.b-prow h4{ margin:0; font-size:17px; font-weight:400; line-height:1.3; }
-.b-where{ display:block; margin-top:6px; font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--muted); }
-.b-prow p{ margin:0 0 12px; font-size:14px; line-height:1.65; color:#9aa5a0; }
-.b-metric{ font-size:15px; color:var(--bone); line-height:1.35; }
-.b-metric a{ display:inline-block; margin-top:10px; font-size:11px; letter-spacing:.16em; text-transform:uppercase;
-  color:var(--bone); text-decoration:none; border-bottom:1px solid var(--vermilion); }
-
-/* experience */
-.b-xp{ display:flex; flex-direction:column; gap:14px; }
-.b-role{ display:grid; grid-template-columns:minmax(170px,.32fr) minmax(0,1fr); gap:12px clamp(20px,4vw,60px);
-  padding:clamp(22px,2.6vw,34px); background:rgba(5,7,10,.8); border:1px solid var(--line-soft); }
-.b-when{ font-size:12px; line-height:1.7; color:var(--muted); }
-.b-when b{ display:block; font-weight:400; font-size:14px; color:var(--bone-dim); }
-.b-now{ display:inline-block; margin-bottom:8px; font-size:10px; letter-spacing:.18em; text-transform:uppercase;
-  color:var(--ember); }
-.b-role h3{ font-size:clamp(20px,1.8vw,26px); font-weight:400; line-height:1.2; }
-.b-role .b-sum{ margin:8px 0 14px; color:#b4bfb7; font-size:15px; }
-.b-role ul{ margin:0 0 16px; padding-left:18px; color:#9aa5a0; font-size:14px; line-height:1.65; }
-.b-role li + li{ margin-top:6px; }
-
-/* skills */
-.b-skills{ display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:14px; margin-top:clamp(50px,9vh,100px); }
-.b-skill{ padding:22px 24px; background:rgba(5,7,10,.8); border:1px solid var(--line-soft); }
-.b-skill h4{ margin:0 0 14px; font-size:11px; font-weight:500; letter-spacing:.2em; text-transform:uppercase; color:var(--bone-dim); }
-
-/* contact */
-.b-ctas{ display:flex; flex-direction:column; gap:26px; align-items:flex-start; }
-.b-ctas .cta{ margin-top:0; }
-body[data-layout-closing="b"] .fin .b-ctas{ grid-column:1; grid-row:3; justify-self:start; }
-.b-channels{ list-style:none; margin:0; padding:0; min-width:min(380px,84vw); border-top:1px solid var(--line-soft); text-align:left; }
-.b-channels li{ display:flex; justify-content:space-between; gap:20px; padding:12px 0; border-bottom:1px solid var(--line-soft); font-size:13px; }
-.b-channels span{ color:var(--muted); }
-.b-channels a{ color:var(--bone); text-decoration:none; }
-.b-channels a:hover{ color:#fff; }
-
-@media (max-width:1080px){
-  .b-intro{ grid-template-columns:1fr; }
-  .b-prow{ grid-template-columns:minmax(0,1fr) minmax(0,1.4fr); }
-  .b-prow .b-metric{ grid-column:1 / -1; }
-}
-@media (max-width:820px){
-  .b-prow, .b-role{ grid-template-columns:1fr; }
-  .fin .b-ctas{ align-items:center; }
-}
-</style>
 </head>
 <body data-layout-hero="b" data-layout-story="b" data-layout-gallery="b"
       data-layout-curriculum="b" data-layout-closing="b" data-layout-footer="b">
@@ -1089,10 +922,9 @@ body[data-layout-closing="b"] .fin .b-ctas{ grid-column:1; grid-row:3; justify-s
     <span class="brand-tx"><b>JASPREET SINGH</b><i>SECURITY · IDENTITY · INFRASTRUCTURE</i></span>
   </a>
   <nav class="nav-links" id="navlinks">
-    <a class="nav-link" href="#gate" data-cursor><span>About</span><span class="alt">Story</span></a>
-    <a class="nav-link" href="#writeups" data-cursor><span>Writeups</span><span class="alt">Read</span></a>
+    <a class="nav-link" href="#gate" data-cursor><span>Experience</span><span class="alt">Work</span></a>
     <a class="nav-link" href="#pathways" data-cursor><span>Projects</span><span class="alt">Lab</span></a>
-    <a class="nav-link" href="#experience" data-cursor><span>Experience</span><span class="alt">Work</span></a>
+    <a class="nav-link" href="#lessons" data-cursor><span>Credentials</span><span class="alt">Proof</span></a>
     <a class="nav-link" href="#eternity" data-cursor><span>Contact</span><span class="alt">Reach out</span></a>
   </nav>
   <button class="nav-burger" aria-label="Menu" data-cursor><i></i><i></i></button>
@@ -1111,12 +943,6 @@ body[data-layout-closing="b"] .fin .b-ctas{ grid-column:1; grid-row:3; justify-s
     </h1>
     <p class="hero-sub body" data-rv="up">I secure identities, endpoints, and the hybrid infrastructure
       behind them, and I build and harden my own lab infrastructure at home and in the cloud.</p>
-    <div class="b-cta-row" data-rv="up">
-      <a class="b-btn is-primary" href="#writeups" data-cursor>Read the writeups</a>
-      <a class="b-btn" href="/Jaspreet-Singh-Resume.pdf" target="_blank" rel="noopener" data-cursor>Résumé</a>
-      <a class="b-btn" href="https://www.linkedin.com/in/jaspreetsingh45" target="_blank" rel="noopener noreferrer" data-cursor>LinkedIn</a>
-      <a class="b-btn" href="https://github.com/jaspreetgill45" target="_blank" rel="noopener noreferrer" data-cursor>GitHub</a>
-    </div>
   </div>
 
   <div class="hero-spacer"></div>
@@ -1125,11 +951,11 @@ body[data-layout-closing="b"] .fin .b-ctas{ grid-column:1; grid-row:3; justify-s
     <div class="hero-cue" data-rv="fade"><span>Scroll to enter</span><span class="track"><i></i></span></div>
     <div class="chapters" id="chips">
       <div class="chip" data-chip="0" data-rv="up" data-cursor><span class="num">01</span>
-        <span class="tx"><b>About</b><p>From sole IT person to senior specialist in about three years.</p></span></div>
+        <span class="tx"><b>Experience</b><p>Five years across identity, security operations, and infrastructure.</p></span></div>
       <div class="chip" data-chip="1" data-rv="up" data-cursor><span class="num">02</span>
-        <span class="tx"><b>Writeups</b><p>Build notes and investigations from my own lab.</p></span></div>
+        <span class="tx"><b>Projects</b><p>Lab builds and programs I have led, from a cloud VPN to AI governance.</p></span></div>
       <div class="chip" data-chip="2" data-rv="up" data-cursor><span class="num">03</span>
-        <span class="tx"><b>Projects</b><p>Security, identity, and infrastructure work, with the numbers.</p></span></div>
+        <span class="tx"><b>Credentials</b><p>CompTIA, Microsoft, LPI, and a WGU cybersecurity degree.</p></span></div>
       <div class="chip" data-chip="3" data-rv="up" data-cursor><span class="num">04</span>
         <span class="tx"><b>Contact</b><p>Open to systems, security operations, and blue team roles.</p></span></div>
     </div>
@@ -1165,23 +991,21 @@ body[data-layout-closing="b"] .fin .b-ctas{ grid-column:1; grid-row:3; justify-s
     </span>
   </div>
   <div class="sec-head" data-rv="fade">
-    <span class="k"><b>01</b> — About</span><span class="rule"></span><span class="k jp">山門</span>
+    <span class="k"><b>01</b> — Experience</span><span class="rule"></span><span class="k jp">山門</span>
   </div>
   <div class="gate-grid">
     <h2 class="display h-sec" data-rv="up">Six hundred identities, one hybrid estate, no door left open.</h2>
     <div class="gate-copy">
-      <p class="lead" data-rv="up">I am a Senior Systems Specialist at Securian Canada. I own identity, security
-        operations, vulnerability management, and business continuity for about 600 users and devices, and I
-        mentor a team of four.</p>
-      <p class="body" data-rv="up">My first IT job was at a warehouse in Delta, where I was the only IT person.
-        There was no ticketing system, so I built one, and it taught me early that good IT is as much about
-        process as technology. A few months later I joined Securian's help desk, and in about three years I
-        moved through endpoint, identity, and platform work into security ownership.</p>
-      <p class="body" data-rv="up" style="margin-top:16px">I am persistent by nature. When something breaks, I
-        want the root cause, not just a workaround. Most of my infrastructure and networking depth comes from
-        the Linux lab I run at home, and I write up what I build and what I find.</p>
-      <a class="arrowlink" href="#writeups" data-rv="fade" data-cursor>
-        <span>Read my writeups</span>
+      <p class="lead" data-rv="up">I am a Senior Systems Specialist at Securian Canada, where I own identity,
+        security operations, vulnerability management, and business continuity for an environment of about
+        600 users and devices. I mentor a team of four and act as the Tier 3 escalation point.</p>
+      <p class="body" data-rv="up">I started on the help desk in 2022 and worked up through endpoint, identity,
+        and platform administration into security ownership. Day to day that means Conditional Access and
+        privileged identity, alert triage with a managed SOC, recurring vulnerability remediation, and data
+        loss prevention under PIPEDA, OSFI, ISO 27001, and NIST aligned controls. I also lead enterprise AI
+        adoption and governance, and I designed a tabletop exercise around an AI driven attack.</p>
+      <a class="arrowlink" href="#pathways" data-rv="fade" data-cursor>
+        <span>See the projects</span>
         <span class="ar"><svg viewBox="0 0 14 14" fill="none"><path d="M3 11 11 3M5 3h6v6" stroke="#dfe7e0" stroke-width="1.3"/></svg></span>
       </a>
     </div>
@@ -1194,41 +1018,28 @@ body[data-layout-closing="b"] .fin .b-ctas{ grid-column:1; grid-row:3; justify-s
   </div>
 </section>
 
-
-<!-- ============================================================ writeups -->
-<section class="sec" id="writeups">
-  <div class="sec-head" data-rv="fade">
-    <span class="k"><b>02</b> — Writeups</span><span class="rule"></span><a class="k b-more" href="/writeups/" data-cursor>All writeups &rarr;</a>
-  </div>
-  <div class="b-intro">
-    <h2 class="display h-sec" data-rv="up">Build notes and investigations, written up in full.</h2>
-    <p class="body-lg" data-rv="up">Each one walks through the evidence, the commands, the dead ends, and how I
-      reached the answer, so you can see how I work, not just what I have used.</p>
-  </div>
-  {latest.length === 0 ? (
-    <p class="body-lg" data-rv="up">The first writeups are being written now.</p>
-  ) : (
-    <div class="b-wgrid">
-      {latest.map((w) => (
-        <a class="b-wcard" href={`/writeups/${w.id}/`} data-rv="up" data-cursor>
-          <span class="b-wmeta">{fmt(w.data.date)} · {minutes(w)} min read{w.data.category && ` · ${w.data.category}`}</span>
-          <h3>{w.data.title}</h3>
-          <p>{w.data.description}</p>
-          <span class="b-tags">{w.data.tools.slice(0, 4).map((t) => <i>{t}</i>)}</span>
-          <span class="b-read">Read the writeup</span>
-        </a>
-      ))}
-    </div>
-  )}
-</section>
-
 <!-- ============================================================ chapter II -->
 <section class="sec" id="pathways" data-cam="2">
-  <div class="sec-head" data-rv="fade">
-    <span class="k"><b>03</b> — Projects</span><span class="rule"></span><span class="k jp">庭園</span>
+  <!-- foreground: the garden frames the mosaic from the sides and the two lower corners -->
+  <div class="fg" data-fg="pathways" aria-hidden="true">
+    <span class="fg-el fg-sakura fg-el--sway" data-fg-in="left">
+      <img src="secret-pathways-assets/foreground/png/sakura-branch.webp" alt="" width="1536" height="1024" loading="lazy" decoding="async">
+    </span>
+    <span class="fg-el fg-leaves fg-el--sway" data-fg-in="right">
+      <img src="secret-pathways-assets/foreground/png/maple-leaves.webp" alt="" width="1536" height="1024" loading="lazy" decoding="async">
+    </span>
+    <span class="fg-el fg-lantern" data-fg-in="up">
+      <img src="secret-pathways-assets/foreground/png/stone-lantern.webp" alt="" width="1024" height="1499" loading="lazy" decoding="async">
+    </span>
+    <span class="fg-el fg-bush" data-fg-in="up">
+      <img src="secret-pathways-assets/foreground/png/garden-bush.webp" alt="" width="1717" height="876" loading="lazy" decoding="async">
+    </span>
   </div>
-  <p class="body-lg" data-rv="up" style="max-width:62ch;margin:0 0 clamp(28px,5vh,60px)">Three highlights, then the full
-    list below: what I have led at work and what I build at home. Build notes and investigations live on the <a href="/writeups/" style="color:var(--bone);text-decoration:none;border-bottom:1px solid var(--vermilion)">writeups page</a>.</p>
+  <div class="sec-head" data-rv="fade">
+    <span class="k"><b>02</b> — Projects</span><span class="rule"></span><span class="k jp">庭園</span>
+  </div>
+  <p class="body-lg" data-rv="up" style="max-width:62ch;margin:0 0 clamp(28px,5vh,60px)">What I build at home to learn,
+    and what I have led at work. Build notes and investigations live on the <a href="/writeups/" style="color:var(--bone);text-decoration:none;border-bottom:1px solid var(--vermilion)">writeups page</a>.</p>
   <div class="cards" id="cards">
     <article class="card" data-rv="up" data-view="0" data-cursor>
       <div class="card-fr" data-frame>
@@ -1255,47 +1066,24 @@ body[data-layout-closing="b"] .fin .b-ctas{ grid-column:1; grid-row:3; justify-s
       <div class="card-meta"><span>Copilot, ChatGPT Enterprise</span><span>At work</span></div>
     </article>
   </div>
-  <div class="b-plist">
-    <div class="b-plist-head" data-rv="fade"><h3>All projects</h3><span class="b-where">{projects.length} entries</span></div>
-    {projects.map((p) => (
-      <div class="b-prow" data-rv="up">
-        <div><h4>{p.name}</h4><span class="b-where">{p.where}</span></div>
-        <div><p>{p.summary}</p><span class="b-tags">{p.tags.map((t) => <i>{t}</i>)}</span></div>
-        <div class="b-metric">{p.metric}{p.link && <><br /><a href={p.link} data-cursor>{p.linkText}</a></>}</div>
-      </div>
-    ))}
-  </div>
-</section>
-
-<!-- ============================================================ experience -->
-<section class="sec" id="experience">
-  <div class="sec-head" data-rv="fade">
-    <span class="k"><b>04</b> — Experience</span><span class="rule"></span><a class="k b-more" href="/Jaspreet-Singh-Resume.pdf" target="_blank" rel="noopener" data-cursor>Résumé PDF &#8599;</a>
-  </div>
-  <div class="b-intro">
-    <h2 class="display h-sec" data-rv="up">Help desk to security ownership in three years.</h2>
-    <p class="body-lg" data-rv="up">Four roles, each one wider than the last: support, then endpoints and
-      identity, then security, compliance, and continuity for the whole environment.</p>
-  </div>
-  <div class="b-xp">
-    {roles.map((r) => (
-      <article class="b-role" data-rv="up">
-        <div class="b-when">{r.now && <span class="b-now">Current</span>}<b>{r.org}</b>{r.dates}<br />{r.place}</div>
-        <div>
-          <h3>{r.title}</h3>
-          <p class="b-sum">{r.summary}</p>
-          <ul>{r.points.map((pt) => <li>{pt}</li>)}</ul>
-          <span class="b-tags">{r.tags.map((t) => <i>{t}</i>)}</span>
-        </div>
-      </article>
-    ))}
-  </div>
 </section>
 
 <!-- ============================================================ chapter III -->
 <section class="sec" id="lessons" data-cam="3">
+  <!-- foreground: a low periphery for the atlas — wall fragment, basalt, one stand of grass -->
+  <div class="fg" data-fg="lessons" aria-hidden="true">
+    <span class="fg-el fg-wall fg-el--flip" data-fg-in="right">
+      <img src="secret-pathways-assets/foreground/png/temple-wall.webp" alt="" width="1536" height="884" loading="lazy" decoding="async">
+    </span>
+    <span class="fg-el fg-stones" data-fg-in="up">
+      <img src="secret-pathways-assets/foreground/png/basalt-stones.webp" alt="" width="1536" height="996" loading="lazy" decoding="async">
+    </span>
+    <span class="fg-el fg-grass" data-fg-in="up">
+      <img src="secret-pathways-assets/foreground/png/tall-grass.webp" alt="" width="1717" height="916" loading="lazy" decoding="async">
+    </span>
+  </div>
   <div class="sec-head" data-rv="fade">
-    <span class="k"><b>05</b> — Skills and credentials</span><span class="rule"></span><span class="k jp">手業</span>
+    <span class="k"><b>03</b> — Credentials</span><span class="rule"></span><span class="k jp">手業</span>
   </div>
   <div class="cur-head">
     <h2 class="display h-sec" data-rv="up">Seven certifications, one degree, always studying.</h2>
@@ -1334,11 +1122,6 @@ body[data-layout-closing="b"] .fin .b-ctas{ grid-column:1; grid-row:3; justify-s
       <span class="t">Certified</span><i class="bar"></i>
     </div>
   </div>
-  <div class="b-skills">
-    {skills.map((s) => (
-      <div class="b-skill" data-rv="up"><h4>{s.group}</h4><span class="b-tags">{s.items.map((t) => <i>{t}</i>)}</span></div>
-    ))}
-  </div>
 </section>
 
 <!-- ============================================================ chapter IV -->
@@ -1358,23 +1141,14 @@ body[data-layout-closing="b"] .fin .b-ctas{ grid-column:1; grid-row:3; justify-s
       <img src="secret-pathways-assets/foreground/png/sakura-branch.webp" alt="" width="1536" height="1024" loading="lazy" decoding="async">
     </span>
   </div>
-  <div class="eyebrow" data-rv="fade">06 — Contact</div>
+  <div class="eyebrow" data-rv="fade">04 — Contact</div>
   <h2 class="display" data-rv="up">Let's talk</h2>
   <p class="body-lg" data-rv="up">I am open to systems administration, security operations, and blue team
-    roles in Metro Vancouver or remote. Email is the fastest way to reach me.</p>
-  <div class="b-ctas" data-rv="fade">
-    <a class="cta" href="mailto:jaspreetgill270@gmail.com" data-cursor>
-      <i></i><span>Email me</span>
-      <svg viewBox="0 0 14 14" fill="none" width="13" height="13"><path d="M3 11 11 3M5 3h6v6" stroke="#dfe7e0" stroke-width="1.3"/></svg>
-    </a>
-    <ul class="b-channels">
-      <li><span>Email</span><a href="mailto:jaspreetgill270@gmail.com" data-cursor>jaspreetgill270@gmail.com</a></li>
-      <li><span>LinkedIn</span><a href="https://www.linkedin.com/in/jaspreetsingh45" target="_blank" rel="noopener noreferrer" data-cursor>in/jaspreetsingh45 &#8599;</a></li>
-      <li><span>GitHub</span><a href="https://github.com/jaspreetgill45" target="_blank" rel="noopener noreferrer" data-cursor>jaspreetgill45 &#8599;</a></li>
-      <li><span>Résumé</span><a href="/Jaspreet-Singh-Resume.pdf" target="_blank" rel="noopener" data-cursor>Download PDF &#8599;</a></li>
-      <li><span>Based in</span>Surrey, BC (Pacific Time)</li>
-    </ul>
-  </div>
+    roles in Metro Vancouver or remote. LinkedIn is the fastest way to reach me.</p>
+  <a class="cta" href="https://www.linkedin.com/in/jaspreetsingh45" target="_blank" rel="noopener noreferrer" data-rv="fade" data-cursor>
+    <i></i><span>Connect on LinkedIn</span>
+    <svg viewBox="0 0 14 14" fill="none" width="13" height="13"><path d="M3 11 11 3M5 3h6v6" stroke="#dfe7e0" stroke-width="1.3"/></svg>
+  </a>
 </section>
 
 <!-- ============================================================ footer -->
@@ -1401,21 +1175,17 @@ body[data-layout-closing="b"] .fin .b-ctas{ grid-column:1; grid-row:3; justify-s
         and digital forensics.</p>
     </div>
     <div><h4>Sections</h4><ul>
-      <li><a href="#gate" data-cursor>About</a></li>
-      <li><a href="#writeups" data-cursor>Writeups</a></li>
+      <li><a href="#gate" data-cursor>Experience</a></li>
       <li><a href="#pathways" data-cursor>Projects</a></li>
-      <li><a href="#experience" data-cursor>Experience</a></li>
+      <li><a href="#lessons" data-cursor>Credentials</a></li>
       <li><a href="#eternity" data-cursor>Contact</a></li>
     </ul></div>
     <div><h4>Elsewhere</h4><ul>
       <li><a href="https://www.linkedin.com/in/jaspreetsingh45" target="_blank" rel="noopener noreferrer" data-cursor>LinkedIn</a></li>
       <li><a href="https://github.com/jaspreetgill45" target="_blank" rel="noopener noreferrer" data-cursor>GitHub</a></li>
-      <li><a href="/Jaspreet-Singh-Resume.pdf" target="_blank" rel="noopener" data-cursor>Résumé</a></li>
-      <li><a href="mailto:jaspreetgill270@gmail.com" data-cursor>Email</a></li>
     </ul></div>
-    <div><h4>Latest writeups</h4><ul>
-      {latest.map((w) => <li><a href={`/writeups/${w.id}/`} data-cursor>{w.data.title.split(':')[0]}</a></li>)}
-      <li><a href="/writeups/" data-cursor>All writeups &rarr;</a></li>
+    <div><h4>Writeups</h4><ul>
+      <li><a href="/writeups/" data-cursor>All writeups</a></li>
     </ul></div>
   </div>
   <div class="foot-base">
@@ -4561,7 +4331,7 @@ function wireHeroExit() {
 function wireNav() {
   let last = 0;
   const rail = $('#rail');
-  const names = ['Home', 'About', 'Projects', 'Credentials', 'Contact', 'Footer'];
+  const names = ['Home', 'Experience', 'Projects', 'Credentials', 'Contact', 'Footer'];
   SECS.forEach((s, i) => {
     const b = document.createElement('button');
     b.innerHTML = '<i></i>'; b.title = names[i] || '';
